@@ -18,6 +18,18 @@ activator keys together again, which unlocks input.
 - Accessibility permissions granted to the built binary (needed to install
   the event taps)
 
+## Command-line options
+
+- `--check-permissions` — checks whether Accessibility permission is granted
+  and exits: `0` if granted, `1` if not. Prints a line containing
+  `Accessibility permission: granted` or `Accessibility permission: not
+  granted`. Installs no event taps and reads no input, so it's safe to run
+  non-interactively (e.g. in a Homebrew formula's `test do` block, since a
+  fresh CI machine won't have granted the permission and this exercises the
+  real binary without requiring keypresses).
+- `--version` — prints the version and exits `0`.
+- `--help` — prints usage and exits `0`.
+
 ## Building
 
 Open `keypause.xcodeproj` in Xcode and build, or build from the command line:
