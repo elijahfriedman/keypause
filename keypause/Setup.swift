@@ -9,7 +9,7 @@ import Foundation
 import Quartz
 
 func selectActivatorKeys() {
-    print("Keypause 1.0 (8) by Elijah Friedman")
+    print("Keypause "+appVersion)
     print("Press your first activator key.")
 
     guard let eventTap = CGEvent.tapCreate(
