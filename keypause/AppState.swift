@@ -22,6 +22,9 @@ var pinnedCursorPosition: CGPoint?
 
 var pressedKeyCodes = Set<CGKeyCode>()
 
+var keyboardTap: CFMachPort?
+var mouseTap: CFMachPort?
+
 enum SetupPhase {
     case settingKey1
     case settingKey2

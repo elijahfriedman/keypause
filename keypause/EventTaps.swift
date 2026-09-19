@@ -82,6 +82,13 @@ func matchesActivatorEvent(_ event: CGEvent, type: CGEventType, activator: Activ
 // MARK: - Keyboard event tap
 
 func eventCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEvent, refcon: UnsafeMutableRawPointer?) -> Unmanaged<CGEvent>? {
+    if type == .tapDisabledByTimeout || type == .tapDisabledByUserInput {
+        if let keyboardTap {
+            CGEvent.tapEnable(tap: keyboardTap, enable: true)
+        }
+        return nil
+    }
+
     // Hardware media/brightness/volume/Mission Control keys (F-keys not acting as
     // standard function keys) arrive as NX_SYSDEFINED events, not keyDown/keyUp/
     // flagsChanged, so they bypass all the activator/key-tracking logic below.
@@ -157,6 +164,13 @@ func eventCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEvent, re
 // MARK: - Mouse event tap
 
 func mouseEventCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEvent, refcon: UnsafeMutableRawPointer?) -> Unmanaged<CGEvent>? {
+    if type == .tapDisabledByTimeout || type == .tapDisabledByUserInput {
+        if let mouseTap {
+            CGEvent.tapEnable(tap: mouseTap, enable: true)
+        }
+        return nil
+    }
+
     // While locked, suppress mouse/trackpad events and pin cursor position
     if keyboardLocked && shouldLockMouse {
         // If we have a pinned position, warp back on any move/drag/scroll

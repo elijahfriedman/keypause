@@ -65,7 +65,7 @@ func main() {
 
     shouldLockMouse = promptYesNo("Also lock trackpad/mouse while locked?", defaultYes: false)
 
-    guard let keyboardTap = CGEvent.tapCreate(
+    guard let createdKeyboardTap = CGEvent.tapCreate(
         tap: .cgSessionEventTap,
         place: .headInsertEventTap,
         options: .defaultTap,
@@ -81,8 +81,8 @@ func main() {
         print("Failed to create event tap. Make sure Accessibility permissions are enabled.")
         exit(1)
     }
+    keyboardTap = createdKeyboardTap
 
-    var mouseTap: CFMachPort?
     if shouldLockMouse {
         mouseTap = CGEvent.tapCreate(
             tap: .cgSessionEventTap,
@@ -97,9 +97,9 @@ func main() {
         }
     }
 
-    let keyboardRunLoopSource = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, keyboardTap, 0)
+    let keyboardRunLoopSource = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, createdKeyboardTap, 0)
     CFRunLoopAddSource(CFRunLoopGetCurrent(), keyboardRunLoopSource, .commonModes)
-    CGEvent.tapEnable(tap: keyboardTap, enable: true)
+    CGEvent.tapEnable(tap: createdKeyboardTap, enable: true)
 
     var mouseRunLoopSource: CFRunLoopSource?
     if let mouseTap {
