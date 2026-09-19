@@ -16,12 +16,15 @@ func printUsage() {
 
     Usage: keypause [options]
 
+    Locks your keyboard (and optionally mouse/trackpad) until you press two \
+    activator keys together again.
+
     Options:
       --check-permissions  Check whether Accessibility permission is granted
                             and exit (0 if granted, 1 if not). Does not
                             install any event taps or read input.
-      --version             Print the version and exit.
-      --help                Print this help message and exit.
+      -h, --help            Print this help message and exit.
+      -v, --version         Print the version and exit.
     """)
 }
 
@@ -42,11 +45,11 @@ func main() {
     if arguments.contains("--check-permissions") {
         checkPermissions()
     }
-    if arguments.contains("--version") {
+    if arguments.contains("-v") || arguments.contains("--version") {
         print(appVersion)
         exit(0)
     }
-    if arguments.contains("--help") {
+    if arguments.contains("-h") || arguments.contains("--help") {
         printUsage()
         exit(0)
     }
