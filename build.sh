@@ -18,8 +18,4 @@ BUILT_PRODUCTS_DIR=$(xcodebuild -project keypause.xcodeproj -scheme keypause \
 mkdir -p dist
 cp "$BUILT_PRODUCTS_DIR/keypause" dist/keypause
 
-mkdir -p "$HOME/.local/bin"
-cp dist/keypause "$HOME/.local/bin/keypause"
-
 echo "Built: dist/keypause"
-echo "Installed: $HOME/.local/bin/keypause"
