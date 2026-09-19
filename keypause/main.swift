@@ -26,7 +26,8 @@ func main() {
         eventsOfInterest: CGEventMask(
             (1 << CGEventType.keyDown.rawValue) |
             (1 << CGEventType.keyUp.rawValue)   |
-            (1 << CGEventType.flagsChanged.rawValue)
+            (1 << CGEventType.flagsChanged.rawValue) |
+            (1 << nxSystemDefinedEventType)
         ),
         callback: eventCallback,
         userInfo: nil

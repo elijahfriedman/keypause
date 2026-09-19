@@ -8,7 +8,8 @@
 import Foundation
 import Quartz
 
-// MARK: - Setup event tap callback (activator key selection)
+
+let nxSystemDefinedEventType: UInt32 = 14
 
 func setupEventCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEvent, refcon: UnsafeMutableRawPointer?) -> Unmanaged<CGEvent>? {
     let keyCode = CGKeyCode(event.getIntegerValueField(.keyboardEventKeycode))
@@ -81,6 +82,13 @@ func matchesActivatorEvent(_ event: CGEvent, type: CGEventType, activator: Activ
 // MARK: - Keyboard event tap
 
 func eventCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEvent, refcon: UnsafeMutableRawPointer?) -> Unmanaged<CGEvent>? {
+    // Hardware media/brightness/volume/Mission Control keys (F-keys not acting as
+    // standard function keys) arrive as NX_SYSDEFINED events, not keyDown/keyUp/
+    // flagsChanged, so they bypass all the activator/key-tracking logic below.
+    if type.rawValue == nxSystemDefinedEventType {
+        return keyboardLocked ? nil : Unmanaged.passUnretained(event)
+    }
+
     guard let activatorKey1 = activatorKey1, let activatorKey2 = activatorKey2 else {
         return Unmanaged.passUnretained(event)
     }
