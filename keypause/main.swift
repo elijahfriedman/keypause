@@ -10,6 +10,8 @@ import Quartz
 
 
 func main() {
+    checkAccessibilityPermission()
+
     selectActivatorKeys()
 
     guard activatorKey1 != nil, activatorKey2 != nil else {
