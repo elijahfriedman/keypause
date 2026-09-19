@@ -11,8 +11,16 @@ import Quartz
 
 let nxSystemDefinedEventType: UInt32 = 14
 
+// ANSI "C" keycode, used to let Control+C terminate setup instead of being
+// captured as an activator combo (the event tap would otherwise swallow it
+// before the terminal's tty driver ever sees it and raises SIGINT).
+private let cKeyCode: CGKeyCode = 8
+
 func setupEventCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEvent, refcon: UnsafeMutableRawPointer?) -> Unmanaged<CGEvent>? {
     let keyCode = CGKeyCode(event.getIntegerValueField(.keyboardEventKeycode))
+    if type == .keyDown && keyCode == cKeyCode && event.flags.contains(.maskControl) {
+        exit(130)
+    }
     if type == .flagsChanged {
         guard let mod = modifierForFlagsAndKeyCode(event.flags, keyCode: keyCode) else { return Unmanaged.passUnretained(event) }
         let keyIsDown = isModifierKeyCodeDown(event.flags, keyCode: keyCode)
