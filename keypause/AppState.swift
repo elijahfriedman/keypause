@@ -8,7 +8,7 @@
 import Foundation
 import Quartz
 
-let appVersion = "0.1.3 (prerelease)"
+let appVersion = "0.1.0 (prerelease)"
 
 var activatorKey1: ActivatorKey?
 var activatorKey2: ActivatorKey?
