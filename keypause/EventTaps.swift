@@ -176,6 +176,18 @@ func mouseEventCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEven
     return Unmanaged.passUnretained(event)
 }
 
+// Trackpad gesture event types (rotate, swipe-to-navigate, magnify/pinch-zoom,
+// smart zoom, and the begin/end gesture bracket events). These aren't exposed
+// as CGEventType cases, but they share the same NX event-type numbering space,
+// so we reference them by raw value the same way nxSystemDefinedEventType does.
+let nxGestureEventType: UInt32 = 29
+let nxMagnifyEventType: UInt32 = 30
+let nxSwipeEventType: UInt32 = 31
+let nxRotateEventType: UInt32 = 18
+let nxBeginGestureEventType: UInt32 = 19
+let nxEndGestureEventType: UInt32 = 20
+let nxSmartMagnifyEventType: UInt32 = 32
+
 // Helper to build a mask for common mouse events
 func mouseEventsMask() -> CGEventMask {
     let types: [CGEventType] = [
@@ -186,7 +198,16 @@ func mouseEventsMask() -> CGEventMask {
         .leftMouseDragged, .rightMouseDragged, .otherMouseDragged,
         .scrollWheel
     ]
-    return types.reduce(CGEventMask(0)) { partial, type in
+    let rawTypes: [UInt32] = [
+        nxGestureEventType, nxMagnifyEventType, nxSwipeEventType,
+        nxRotateEventType, nxBeginGestureEventType, nxEndGestureEventType,
+        nxSmartMagnifyEventType
+    ]
+    var mask = types.reduce(CGEventMask(0)) { partial, type in
         partial | (1 << type.rawValue)
     }
+    mask = rawTypes.reduce(mask) { partial, rawType in
+        partial | (1 << rawType)
+    }
+    return mask
 }
