@@ -139,13 +139,7 @@ func eventCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEvent, re
         awaitingRelease = false
     }
 
-    // Suppress activator key events from reaching the terminal/apps
-    if matchesActivatorEvent(event, type: type, activator: activatorKey1) ||
-        matchesActivatorEvent(event, type: type, activator: activatorKey2) {
-        return nil
-    }
-
-    // If locked, block all keys except activators (which are already suppressed above)
+    // If locked, block all keys (including activators, so the lock combo itself doesn't leak through)
     if keyboardLocked {
         // Explicitly suppress Fn and F-keys (top row) while locked
         if type == .keyDown || type == .keyUp || type == .flagsChanged {
