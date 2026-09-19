@@ -15,7 +15,7 @@ func setupEventCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEven
     let keyCode = CGKeyCode(event.getIntegerValueField(.keyboardEventKeycode))
     if type == .flagsChanged {
         guard let mod = modifierForFlagsAndKeyCode(event.flags, keyCode: keyCode) else { return Unmanaged.passUnretained(event) }
-        let keyIsDown = (event.flags.rawValue & mod.rawValue) != 0
+        let keyIsDown = isModifierKeyCodeDown(event.flags, keyCode: keyCode)
         if !keyIsDown { return Unmanaged.passUnretained(event) }
         switch setupPhase {
         case .settingKey1:
@@ -110,7 +110,7 @@ func eventCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEvent, re
         pressedKeyCodes.remove(keyCode)
     } else if type == .flagsChanged {
         // Modifier keys: update pressedKeyCodes for left/right modifiers
-        let keyIsDown = (modifierForFlagsAndKeyCode(flags, keyCode: keyCode) != nil) && (flags.rawValue & (modifierForFlagsAndKeyCode(flags, keyCode: keyCode)?.rawValue ?? 0) != 0)
+        let keyIsDown = isModifierKeyCodeDown(flags, keyCode: keyCode)
         if keyIsDown {
             pressedKeyCodes.insert(keyCode)
         } else {

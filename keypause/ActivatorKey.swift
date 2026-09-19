@@ -86,6 +86,33 @@ func modifierForFlagsAndKeyCode(_ flags: CGEventFlags, keyCode: CGKeyCode) -> CG
     }
 }
 
+// Device-dependent modifier masks (from IOLLEvent.h). Unlike the device-independent
+// masks (.maskShift, .maskCommand, etc.), these are side-specific: macOS only clears
+// the device-independent bit once *all* keys in that family are released, so relying
+// on it to detect a single side's up/down state misreports a still-pressed key as
+// released (or vice versa) whenever the other side is also held.
+private func deviceDependentModifierMask(forKeyCode keyCode: CGKeyCode) -> UInt64? {
+    switch keyCode {
+    case 59: return 0x00000001 // Left Control
+    case 56: return 0x00000002 // Left Shift
+    case 60: return 0x00000004 // Right Shift
+    case 55: return 0x00000008 // Left Command
+    case 54: return 0x00000010 // Right Command
+    case 58: return 0x00000020 // Left Option
+    case 61: return 0x00000040 // Right Option
+    case 62: return 0x00002000 // Right Control
+    default: return nil
+    }
+}
+
+func isModifierKeyCodeDown(_ flags: CGEventFlags, keyCode: CGKeyCode) -> Bool {
+    if let deviceMask = deviceDependentModifierMask(forKeyCode: keyCode) {
+        return flags.rawValue & deviceMask != 0
+    }
+    guard let mod = modifierForFlagsAndKeyCode(flags, keyCode: keyCode) else { return false }
+    return flags.contains(mod)
+}
+
 func isActivatorPressed(_ activator: ActivatorKey, flags: CGEventFlags, pressedKeyCodes: Set<CGKeyCode>) -> Bool {
     switch activator {
     case .keyCode(let k):
