@@ -7,6 +7,7 @@
 
 import Foundation
 import Quartz
+import ApplicationServices
 
 
 func printUsage() {
@@ -19,19 +20,37 @@ func printUsage() {
     activator keys together again.
 
     Options:
-      -h, --help     Show this help message and exit.
-      -v, --version  Show the version number and exit.
+      --check-permissions  Check whether Accessibility permission is granted
+                            and exit (0 if granted, 1 if not). Does not
+                            install any event taps or read input.
+      -h, --help            Print this help message and exit.
+      -v, --version         Print the version and exit.
     """)
+}
+
+func checkPermissions() -> Never {
+    let trusted = AXIsProcessTrusted()
+    if trusted {
+        print("Accessibility permission: granted")
+        exit(0)
+    } else {
+        print("Accessibility permission: not granted")
+        exit(1)
+    }
 }
 
 func main() {
     let arguments = CommandLine.arguments.dropFirst()
-    if arguments.contains("-h") || arguments.contains("--help") {
-        printUsage()
-        exit(0)
+
+    if arguments.contains("--check-permissions") {
+        checkPermissions()
     }
     if arguments.contains("-v") || arguments.contains("--version") {
         print(appVersion)
+        exit(0)
+    }
+    if arguments.contains("-h") || arguments.contains("--help") {
+        printUsage()
         exit(0)
     }
 
