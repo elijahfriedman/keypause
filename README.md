@@ -18,6 +18,12 @@ activator keys together again, which unlocks input.
 - Accessibility permissions granted to the built binary (needed to install
   the event taps)
 
+## Installation
+
+```bash
+brew install elijahfriedman/tap/keypause
+```
+
 ## Command-line options
 
 - `--check-permissions` — checks whether Accessibility permission is granted
