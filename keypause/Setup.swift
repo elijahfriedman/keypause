@@ -5,8 +5,23 @@
 //  Created by Elijah Friedman on 9/19/26.
 //
 
+import ApplicationServices
 import Foundation
 import Quartz
+
+func checkAccessibilityPermission() {
+    guard !AXIsProcessTrusted() else { return }
+
+    print("""
+        KeyPause requires Accessibility permission to control keyboard input.
+
+        Enable KeyPause in:
+        System Settings → Privacy & Security → Accessibility
+
+        Then run keypause again.
+        """)
+    exit(1)
+}
 
 func selectActivatorKeys() {
     print("Keypause "+appVersion)

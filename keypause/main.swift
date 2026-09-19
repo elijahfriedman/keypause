@@ -54,6 +54,8 @@ func main() {
         exit(0)
     }
 
+    checkAccessibilityPermission()
+
     selectActivatorKeys()
 
     guard activatorKey1 != nil, activatorKey2 != nil else {
