@@ -9,7 +9,32 @@ import Foundation
 import Quartz
 
 
+func printUsage() {
+    print("""
+    Keypause \(appVersion)
+
+    Usage: keypause [options]
+
+    Locks your keyboard (and optionally mouse/trackpad) until you press two \
+    activator keys together again.
+
+    Options:
+      -h, --help     Show this help message and exit.
+      -v, --version  Show the version number and exit.
+    """)
+}
+
 func main() {
+    let arguments = CommandLine.arguments.dropFirst()
+    if arguments.contains("-h") || arguments.contains("--help") {
+        printUsage()
+        exit(0)
+    }
+    if arguments.contains("-v") || arguments.contains("--version") {
+        print(appVersion)
+        exit(0)
+    }
+
     selectActivatorKeys()
 
     guard activatorKey1 != nil, activatorKey2 != nil else {
