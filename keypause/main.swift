@@ -20,9 +20,17 @@ func printUsage() {
     activator keys together again.
 
     Options:
-      --check-permissions  Check whether Accessibility permission is granted
+      --check-permissions   Check whether Accessibility permission is granted
                             and exit (0 if granted, 1 if not). Does not
                             install any event taps or read input.
+      --keys=KEY1+KEY2      Set the activator combo from the command line
+                            instead of the interactive prompt, e.g.
+                            --keys=leftcommand+leftshift. Key names match
+                            what keypause prints during setup (case
+                            insensitive), plus aliases like cmd, shift,
+                            option/alt, control/ctrl, and caps. A raw
+                            keycode number can also be given prefixed with
+                            #, e.g. --keys=#55+#56.
       -h, --help            Print this help message and exit.
       -v, --version         Print the version and exit.
     """)
@@ -56,7 +64,22 @@ func main() {
 
     checkAccessibilityPermission()
 
-    selectActivatorKeys()
+    let keysArgument = arguments
+        .first { $0.hasPrefix("--keys=") }
+        .map { String($0.dropFirst("--keys=".count)) }
+
+    if let keysArgument {
+        guard let (key1, key2) = parseActivatorKeyPair(keysArgument) else {
+            print("Invalid --keys value \"\(keysArgument)\". Use two different keys separated by '+', e.g. --keys=leftcommand+leftshift.")
+            exit(1)
+        }
+        activatorKey1 = key1
+        activatorKey2 = key2
+        print("Keypause \(appVersion)")
+        print("Activator keys set to \(keyDescription(key1)) and \(keyDescription(key2)) via --keys.")
+    } else {
+        selectActivatorKeys()
+    }
 
     guard activatorKey1 != nil, activatorKey2 != nil else {
         print("Failed to set activator keys.")

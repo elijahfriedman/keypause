@@ -33,6 +33,9 @@ brew install elijahfriedman/tap/keypause
   non-interactively (e.g. in a Homebrew formula's `test do` block, since a
   fresh CI machine won't have granted the permission and this exercises the
   real binary without requiring keypresses).
+- `--keys=KEY1+KEY2` — sets the activator combo from the command line instead
+  of the interactive prompt, e.g. `--keys=leftcommand+leftshift`. See
+  [docs/KEYS.md](docs/KEYS.md) for accepted key names.
 - `--version` — prints the version and exits `0`.
 - `--help` — prints usage and exits `0`.
 
