@@ -31,6 +31,8 @@ func printUsage() {
                             option/alt, control/ctrl, and caps. A raw
                             keycode number can also be given prefixed with
                             #, e.g. --keys=#55+#56.
+      --lock-mouse          Also lock the trackpad/mouse while locked,
+                            instead of the interactive prompt.
       -h, --help            Print this help message and exit.
       -v, --version         Print the version and exit.
     """)
@@ -86,7 +88,12 @@ func main() {
         exit(1)
     }
 
-    shouldLockMouse = promptYesNo("Also lock trackpad/mouse while locked?", defaultYes: false)
+    if arguments.contains("--lock-mouse") {
+        shouldLockMouse = true
+        print("Trackpad/mouse locking enabled via --lock-mouse.")
+    } else {
+        shouldLockMouse = promptYesNo("Also lock trackpad/mouse while locked?", defaultYes: false)
+    }
 
     guard let createdKeyboardTap = CGEvent.tapCreate(
         tap: .cgSessionEventTap,

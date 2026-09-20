@@ -36,6 +36,8 @@ brew install elijahfriedman/tap/keypause
 - `--keys=KEY1+KEY2` — sets the activator combo from the command line instead
   of the interactive prompt, e.g. `--keys=leftcommand+leftshift`. See
   [docs/KEYS.md](docs/KEYS.md) for accepted key names.
+- `--lock-mouse` — also locks the trackpad/mouse while locked, instead of the
+  interactive prompt.
 - `--version` — prints the version and exits `0`.
 - `--help` — prints usage and exits `0`.
 
