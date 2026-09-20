@@ -33,8 +33,17 @@ func printUsage() {
                             #, e.g. --keys=#55+#56.
       --lock-mouse          Also lock the trackpad/mouse while locked,
                             instead of the interactive prompt.
+      --toggle-config       Toggle whether the saved config file is used, and
+                            exit. Does not install any event taps or read
+                            input.
       -h, --help            Print this help message and exit.
       -v, --version         Print the version and exit.
+
+    Resolved settings are saved to ~/.config/keypause/config and reused on
+    future runs, so --keys/--lock-mouse aren't needed every time. Flags
+    passed on the command line always take precedence and update the saved
+    config. Use --toggle-config to disable (or re-enable) using the saved
+    config without deleting it.
     """)
 }
 
@@ -51,6 +60,7 @@ func checkPermissions() -> Never {
 
 func main() {
     let arguments = CommandLine.arguments.dropFirst()
+    let config = loadConfig()
 
     if arguments.contains("--check-permissions") {
         checkPermissions()
@@ -63,8 +73,22 @@ func main() {
         printUsage()
         exit(0)
     }
+    if arguments.contains("--toggle-config") {
+        let newEnabled = !(config.enabled ?? true)
+        var updatedConfig = config
+        updatedConfig.enabled = newEnabled
+        writeConfig(updatedConfig)
+        if newEnabled {
+            print("Config enabled. Saved settings in \(configFileURL.path) will be used.")
+        } else {
+            print("Config disabled. Saved settings in \(configFileURL.path) will be ignored.")
+        }
+        exit(0)
+    }
 
     checkAccessibilityPermission()
+
+    let configEnabled = config.enabled ?? true
 
     let keysArgument = arguments
         .first { $0.hasPrefix("--keys=") }
@@ -79,11 +103,19 @@ func main() {
         activatorKey2 = key2
         print("Keypause \(appVersion)")
         print("Activator keys set to \(keyDescription(key1)) and \(keyDescription(key2)) via --keys.")
+    } else if configEnabled, let configKeys = config.keys, let (key1, key2) = parseActivatorKeyPair(configKeys) {
+        activatorKey1 = key1
+        activatorKey2 = key2
+        print("Keypause \(appVersion)")
+        print("Activator keys set to \(keyDescription(key1)) and \(keyDescription(key2)) from \(configFileURL.path).")
     } else {
+        if configEnabled, config.keys != nil {
+            print("Warning: Ignoring invalid \"keys\" value in \(configFileURL.path).")
+        }
         selectActivatorKeys()
     }
 
-    guard activatorKey1 != nil, activatorKey2 != nil else {
+    guard let activatorKey1, let activatorKey2 else {
         print("Failed to set activator keys.")
         exit(1)
     }
@@ -91,8 +123,18 @@ func main() {
     if arguments.contains("--lock-mouse") {
         shouldLockMouse = true
         print("Trackpad/mouse locking enabled via --lock-mouse.")
+    } else if configEnabled, let configLockMouse = config.lockMouse {
+        shouldLockMouse = configLockMouse
     } else {
         shouldLockMouse = promptYesNo("Also lock trackpad/mouse while locked?", defaultYes: false)
+    }
+
+    if configEnabled {
+        writeConfig(KeypauseConfig(
+            keys: "\(activatorKeyStorageName(activatorKey1))+\(activatorKeyStorageName(activatorKey2))",
+            lockMouse: shouldLockMouse,
+            enabled: true
+        ))
     }
 
     guard let createdKeyboardTap = CGEvent.tapCreate(

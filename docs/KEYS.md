@@ -18,6 +18,10 @@ isn't listed here (e.g. an unusual keyboard's special key), Keypause will
 print it as its raw keycode number, which you can pass to `--keys` prefixed
 with `#` (no quoting needed).
 
+These are also the names Keypause writes to `~/.config/keypause/config` (as
+`keys=Name1+Name2`) when it saves your resolved activator combo, so the saved
+file uses the same names as this table.
+
 | Key | Type as | Raw key number |
 | --- | --- | --- |
 | Left Command | `leftcommand`, `cmd`, `command` | 55 |

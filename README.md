@@ -38,8 +38,19 @@ brew install elijahfriedman/tap/keypause
   [docs/KEYS.md](docs/KEYS.md) for accepted key names.
 - `--lock-mouse` — also locks the trackpad/mouse while locked, instead of the
   interactive prompt.
+- `--toggle-config` — toggles whether the saved config file is used, and
+  exits. Installs no event taps and reads no input.
 - `--version` — prints the version and exits `0`.
 - `--help` — prints usage and exits `0`.
+
+Resolved activator keys and mouse-lock preference are saved to
+`~/.config/keypause/config` and reused on future runs, so you don't need to
+pass `--keys`/`--lock-mouse` (or answer the interactive prompts) every time.
+Command-line flags always take precedence and update the saved config. Run
+`keypause --toggle-config` to disable (or re-enable) using the saved config
+without deleting it — while disabled, keypause always falls back to
+command-line flags or the interactive prompts, and won't overwrite the saved
+file.
 
 ## Building
 
